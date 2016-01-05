@@ -1,0 +1,20 @@
+multiuser on 
+startup_message off
+escape "^Zz"
+hardstatus on 
+hardstatus alwayslastline 
+# hardstatus string "%{.bW}%-w%{.rY}%n %t%{-}% w %=%{..G} %H(%l) %{..Y} %Y/%m/%d %c:%s " 
+#hardstatus string "%{= R}[ %{=b b}%-w%{=rb db}%>%n %t%{-}%+w%{-b}%< %=%{R}] %=%{..G} %H(%l) %{..Y} %Y/%m/%d %c:%s " 
+#hardstatus string "%{.bW}[%-w%{=rb db}%>%n %t%{-}%+w%{-b}%< %=%]   %=%{..G} %H(%l) %{..Y} %Y/%m/%d %c:%s "
+hardstatus string "%{.bW}[%-w%{=rb db}%>%n %t%{-}%+w%{-b}%< %=%]   %=%{..G} %H %{..Y} %Y/%m/%d %c:%s "
+
+vbell off 
+altscreen on
+defscrollback 1024
+bind w windowlist -b 
+bind ^w windowlist –b
+term xterm-color 
+deflogin off
+
+# #dynamic title 
+#shelltitle ‘$ |Bash’
