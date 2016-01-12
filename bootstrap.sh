@@ -2,7 +2,6 @@
 
 BOOTSTRAP=$0
 DOTFILES_ROOT=$PWD
-HOME=home
 BACKUP_DIR=$HOME/.backup-`date +%Y%m%d-%H%M%S`
 
 echo Create backup directory: $BACKUP_DIR
