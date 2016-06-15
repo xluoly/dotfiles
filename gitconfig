@@ -1,6 +1,6 @@
 [user]
     name = liuyi.luo
-    email = xluoly@gamil.com
+    email = xluoly@gmail.com
 [color]
     ui = auto
 [core]
@@ -8,8 +8,10 @@
     autocrlf = input
     whitespace = cr-at-eol
 [alias]  
-    lg = log --decorate --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    l = log --decorate --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 [push]
     default = matching
 [merge]
     tool = meld
+[diff]
+    tool = vimdiff

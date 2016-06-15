@@ -1,11 +1,10 @@
+" {{{ vundle
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
@@ -25,21 +24,23 @@ Plugin 'gmarik/Vundle.vim'
 "Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 " Avoid a name conflict with L9
 "Plugin 'user/L9', {'name': 'newL9'}
+
 Plugin 'scrooloose/nerdtree'  "文件浏览
 Plugin 'majutsushi/tagbar'    "代码符号
 Plugin 'wesleyche/SrcExpl'    "类似sourceInsight的代码预览窗口
-Plugin 'minibufexpl.vim'
 Plugin 'xmledit'
 Plugin 'ctrlp.vim'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'ap/vim-buftabline'
+Plugin 'vimwiki/vimwiki'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'tpope/vim-fugitive'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
-filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
+
 " Brief help
 " :PluginList       - lists configured plugins
 " :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
@@ -48,61 +49,71 @@ filetype plugin indent on    " required
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
-syntax on
+" }}}
 
+" {{{ general settings
+colorscheme desert
+
+set nobackup
+set encoding=UTF-8
+" set langmenu=zh_CN.UTF-8
+" language message zh_CN.UTF-8
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+set fileencoding=utf-8
+
+syntax on
+set showcmd                     " display incomplete commands
+filetype plugin indent on       " load file type plugins + indentation
+
+" Whitespace
+set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
+set expandtab                   " use spaces, not tabs (optional)
+set backspace=indent,eol,start  " backspace through everything in insert mode
+set number                      " show lie number
+
+" Searching
+set hlsearch                    " highlight matches
+set incsearch                   " incremental searching
+set ignorecase                  " searches are case insensitive...
+set smartcase                   " ... unless they contain at least one capital letter:w
+
+" move cursor in multiple window
+nmap <C-h> <C-W>h    " Ctrl+h move to left window
+nmap <C-j> <C-W>j    " Ctrl+j move to below window
+nmap <C-k> <C-W>k    " Ctrl+k move to above window
+nmap <C-l> <C-W>l    " Ctrl+l move to right window
+
+" }}}
+
+" nerdtree {{{
 let NERDTreeWinPos='left'
 nnoremap <F2> :NERDTreeToggle<CR>
+" }}}
+
+" tagbar {{{
+nnoremap <F3> :TagbarToggle<CR>
 let g:tagbar_ctags_bin='/usr/bin/ctags'
 let g:tagbar_left = 0
-nnoremap <F3> :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
+set tags+=tags;/
+set autochdir
+" }}}
+
+" SrcExpl {{{
 nmap <F4> :SrcExplToggle<CR>
 let g:Srcexpl_winHeight = 10
-" // Set 100 ms for refreshing the Source Explorer
-let g:SrcExpl_refreshTime = 100
+let g:SrcExpl_refreshTime = 100 " 100ms for refreshing the Source Explorer
+let g:SrcExpl_jumpKey = '<ENTER>' " <Enter> key to jump into the exact definition context
+let g:SrcExpl_gobackKey = '<SPACE>' " <Space> key for back from the definition context
+let g:SrcExpl_pluginList = [ "__Tag_List__", "_NERD_tree_" ]
+" }}}
 
-" // Set "Enter" key to jump into the exact definition context
-let g:SrcExpl_jumpKey = "<ENTER>"
-
-" // Set "Space" key for back from the definition context
-let g:SrcExpl_gobackKey = "<SPACE>"
-
-let g:SrcExpl_pluginList = [
-            \ "__Tag_List__",
-            \ "_NERD_tree_"
-            \ ]
-
-
-set tags=tags;/  "搜索上一级建立的tag
-set autochdir
-
-nmap <C-h> <C-W>h "Ctrl+h 进入左边的窗口
-nmap <C-j> <C-W>j "Ctrl+j 进入下边的窗口
-nmap <C-k> <C-W>k "Ctrl+k 进入上边的窗口
-nmap <C-l> <C-W>l "Ctrl+l 进入右边的窗口
-
-""""""""""""""""""""""""""""""  
-" miniBufexplorer Config  
-""""""""""""""""""""""""""""""  
-let g:miniBufExplMapWindowNavArrows = 1  
-let g:miniBufExplMapWindowNavVim = 1  
-let g:miniBufExplMapCTabSwitchWindows = 1  
-"let g:miniBufExplMapCTabSwitchBufs = 1   
-let g:miniBufExplModSelTarget = 1  
-
-"解决FileExplorer窗口变小问题  
-let g:bufExplorerMaxHeight=30
-let g:miniBufExplForceSyntaxEnable = 1  
-let g:miniBufExplorerMoreThanOne=2  
-
-""""""""""""""""""""""""""""""
-" xmledit
-""""""""""""""""""""""""""""""
+" {{{ xmledit
 let g:xml_syntax_folding=1
 au FileType xml setlocal foldmethod=syntax
+" }}}
 
-""""""""""""""""""""""""""""""
-" Language:     PlantUML
-""""""""""""""""""""""""""""""
+" {{{ Language: PlantUML
 if exists("g:loaded_plantuml_plugin")
     finish
 endif
@@ -115,11 +126,9 @@ let s:makecommand=g:plantuml_executable_script." %"
 
 " define a sensible makeprg for plantuml files
 autocmd Filetype plantuml let &l:makeprg=s:makecommand
+" }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""
-" highlight the 80th column
-" In Vim >= 7.3, also highlight columns 120+
-"""""""""""""""""""""""""""""""""""""""""""""
+" {{{ highlight the 80th column, In Vim >= 7.3, also highlight columns 120+
 if exists('+colorcolumn')
     " (I picked 120-320 because you have to provide an upper bound and 320 just
     "  covers a 1080p GVim window in Ubuntu Mono 11 font.)
@@ -129,6 +138,7 @@ else
     " fallback for Vim < v7.3
     autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 endif
+" }}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Switch syntax highlighting on, when the terminal has colors
@@ -167,7 +177,7 @@ if has("autocmd")
 
   augroup END
 
-  " 当$MYVIMRC文件被修改保存后，自动重新载入生效
+  " reload the $MYVIMRC file after it saved
   augroup reload_vimrc " {
     autocmd!
     autocmd BufWritePost $MYVIMRC source $MYVIMRC
@@ -187,43 +197,7 @@ if !exists(":DiffOrig")
 		  \ | wincmd p | diffthis
 endif
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-colorscheme desert
-
-set nocompatible                " choose no compatibility with legacy vi
-set nobackup
-set encoding=UTF-8
-" set langmenu=zh_CN.UTF-8
-" language message zh_CN.UTF-8
-set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
-set fileencoding=utf-8
-
-syntax enable
-set showcmd                     " display incomplete commands
-filetype plugin indent on       " load file type plugins + indentation
-
-"" Whitespace
-" set nowrap                      " don't wrap lines
-set tabstop=4 shiftwidth=4      " a tab is two spaces (or set this to 4)
-set expandtab                   " use spaces, not tabs (optional)
-set backspace=indent,eol,start  " backspace through everything in insert mode
-set number                      " show lie number
-
-"" Searching
-set hlsearch                    " highlight matches
-set incsearch                   " incremental searching
-set ignorecase                  " searches are case insensitive...
-set smartcase                   " ... unless they contain at least one capital letter:w
-
-" 记忆文件上次编辑的位置
-autocmd BufReadPost *
-    \ if line("'\"")>0&&line("'\"")<=line("$") |
-    \   exe "normal g'\"" |
-    \ endif
-
-"" cscope
+" {{{ cscope
 if has("cscope")
     set cscopetag   " 使支持用 Ctrl+]  和 Ctrl+t 快捷键在代码间跳来跳去
     " check cscope for definition of a symbol before checking ctags:
@@ -258,4 +232,73 @@ if has("cscope")
     nmap <C-/>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
     nmap <C-/>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 endif
+" }}}
+
+" {{{ vimwiki
+let vimwiki_path=$HOME.'/vimwiki/'
+let vimwiki_html_path=$HOME.'/vimwiki_html/'
+let g:vimwiki_list = [{'path': '~/vimwiki',
+    \    'path_html': '~/vimwiki_html',
+    \    'template_path': '~/vimwiki_html/static/',
+    \    'template_default': 'default',
+    \    'template_ext': '.tpl',
+    \    'auto_export': 0}]
+
+" 对中文用户来说，并不怎么需要驼峰英文成为维基词条
+let g:vimwiki_camel_case = 0
+ 
+" 标记为完成的 checklist 项目会有特别的颜色
+let g:vimwiki_hl_cb_checked = 1
+ 
+" 我的 vim 是没有菜单的，加一个 vimwiki 菜单项也没有意义
+let g:vimwiki_menu = ''
+ 
+" 是否开启按语法折叠  会让文件比较慢
+"let g:vimwiki_folding = 1
+ 
+" 是否在计算字串长度时用特别考虑中文字符
+let g:vimwiki_CJK_length = 1
+ 
+" 详见下文...
+let g:vimwiki_valid_html_tags='b,i,s,u,sub,sup,kbd,del,br,hr,div,code,h1'
+" }}}
+
+" {{{ airline
+set t_Co=256
+set laststatus=2
+"let g:airline_theme="molokai"
+"let g:airline_theme="luna"
+let g:airline_theme="papercolor"
+let g:airline_powerline_fonts = 1
+
+nnoremap <C-N> :bn<CR>
+nnoremap <C-P> :bp<CR>
+
+"enable tabline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#whitespace#symbol = '!'
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+
+let g:airline_symbols.space = "\ua0"
+let g:airline_left_sep = '⮀'
+let g:airline_left_alt_sep = '⮁'
+let g:airline_right_sep = '⮂'
+let g:airline_right_alt_sep = '⮃'
+let g:airline_symbols.branch = '⭠'
+let g:airline_symbols.readonly = '⭤'
+
+augroup reload_vimrc " {
+    autocmd!
+    autocmd BufWritePost $MYVIMRC source $MYVIMRC | AirlineRefresh
+    autocmd BufWritePost $MYVIMRC AirlineRefresh
+augroup END " }
+" }}}
 
