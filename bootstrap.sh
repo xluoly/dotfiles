@@ -2,22 +2,27 @@
 
 BOOTSTRAP=$0
 DOTFILES_ROOT=$PWD
-BACKUP_DIR=$HOME/.backup-`date +%Y%m%d-%H%M%S`
+BACKUP_DIR=$HOME/.dotfiles-backup-`date +%Y%m%d-%H%M%S`
 
-echo Create backup directory: $BACKUP_DIR
-mkdir -p $BACKUP_DIR
-
-for SRC in $(ls $DOTFILES_ROOT | sed -e "/$(basename $BOOTSTRAP)/d"); do
-    echo $SRC
+for SRC in $(ls $DOTFILES_ROOT | \
+             sed -e "/$(basename $BOOTSTRAP)/d" \
+                 -e "/LICENSE/d" \
+                 -e "/README\.md/d" \
+                 -e "/.*\.png/d");
+do
     DST=$HOME/.$SRC
     if [ -L $DST ]; then
-        echo unlink $DST
         unlink $DST
     elif [ -e $DST ]; then
-        echo mv $DST $BACKUP_DIR
+        if [ ! -d $BACKUP_DIR ]; then
+            echo -e "Create backup directory: $BACKUP_DIR"
+            mkdir -p $BACKUP_DIR
+        fi
+        echo -e "mv $DST $BACKUP_DIR"
         mv $DST $BACKUP_DIR
     fi
-    echo ln -s $DOTFILES_ROOT/$SRC $DST
     ln -s $DOTFILES_ROOT/$SRC $DST
 done
+
+echo -e "Done"
 
